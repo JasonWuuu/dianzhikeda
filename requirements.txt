@@ -1,0 +1,9 @@
+requests
+requests
+pandas
+lxml
+bs4
+aiohttp
+python-dotenv
+selenium
+opencv-python
