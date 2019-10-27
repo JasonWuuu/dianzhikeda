@@ -8,6 +8,8 @@ from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
 import verify_code_service
 import asyncio
+from datetime import datetime, timedelta
+
 
 def does_course_complete(nobr_element):
     """
@@ -21,6 +23,27 @@ def does_course_complete(nobr_element):
         return False
     else:
         return True
+
+
+def try_click_chapter(driver):
+    """
+    对于PPT的话，要点击最后一页 **************此路不通，只能人工****************
+    :return:
+    """
+    try:
+        # 跳出w_code，回到主页
+        driver.switch_to.default_content()
+        myframe = driver.find_elements_by_xpath("//frame[@name='w_content']//iframe[@name='w_sco']")
+        driver.switch_to.frame(myframe)
+
+        driver.find_element_by_xpath('//div[@class="chapter"]/span[last()]').click()
+        print('PPT 最后一页已点击')
+    except Exception as ex:
+        print('做PPT出错了', ex)
+
+    # 跳出w_code，回到主页
+    driver.switch_to.default_content()
+    driver.switch_to.frame('w_code')
 
 
 def login(driver, username, password):
@@ -64,11 +87,16 @@ def do_all_course(driver, term='3(2019秋)'):
 
     for tr_element in tr_list:
         term_element = tr_element.find_elements_by_tag_name('td')[2]
-        if term_element.text == term:
+        course_name = tr_element.find_elements_by_tag_name('td')[1].text
+        course_percent = tr_element.find_elements_by_tag_name('td')[6].text
+        course_percent = float(course_percent[course_percent.rindex('[') + 1:].replace(']', ''))
+
+        if term_element.text == term and course_percent < 50:
             try:
+                print(f'学期：{term_element.text}, 课程：{course_name}, 已看百分比：{course_percent}')
                 do_course(driver, tr_element)
-            except:
-                pass
+            except Exception as ex:
+                print('做课程错误', ex)
 
 
 def do_course(driver, tr_element):
@@ -78,11 +106,8 @@ def do_course(driver, tr_element):
     :param tr_element:
     :return:
     """
-    term_element = tr_element.find_elements_by_tag_name('td')[2]
-    course_name = tr_element.find_elements_by_tag_name('td')[1].text
-    start_to_study_link = tr_element.find_element_by_xpath("td/a[contains(text(),'开始学习')]")
 
-    print(f'学期：{term_element.text}, 课程：{course_name}')
+    start_to_study_link = tr_element.find_element_by_xpath("td/a[contains(text(),'开始学习')]")
 
     # 点击开始学习，跳转到第三个TAB
     start_to_study_link.click()
@@ -101,6 +126,8 @@ def do_course(driver, tr_element):
 
     # 展开所有菜单
     expand_all_menu(driver)
+    # 展开所有菜单,再确认
+    expand_all_menu(driver)
 
     time.sleep(30)
 
@@ -108,9 +135,9 @@ def do_course(driver, tr_element):
     all_course_link_span = driver.find_elements_by_xpath('//span[@class = "h_content h_scorm_content"]')
     for course_link_span in all_course_link_span:
         try:
-            look_video(course_link_span)
-        except:
-            pass
+            look_video(driver, course_link_span)
+        except Exception as ex:
+            print('看视频错误', ex)
 
     # 做完后，关闭第三个TAB，并回到第二个TAB
     driver.close()
@@ -138,7 +165,7 @@ def expand_all_menu(driver):
             break
 
 
-def look_video(course_link_span):
+def look_video(driver, course_link_span):
     """
     真正看视频的核心
     :return:
@@ -151,15 +178,17 @@ def look_video(course_link_span):
 
     # 课程链接是否被点击过
     does_course_link_clicked = False
+    # 课程开始时间
+    course_start_time = datetime.now()
 
     while True:
+
         if does_course_complete(nobr_element):
             # 如果课程已完成
             print(', 状态：已完成')
             break
         else:
             # 如果课程未完成，就点击一下此课程链接
-
             if EC.element_to_be_clickable(course_link) and not does_course_link_clicked:
                 course_link.click()
                 does_course_link_clicked = True
@@ -167,6 +196,12 @@ def look_video(course_link_span):
 
         time.sleep(30)
         print('.', end='')
+
+        # 超时间为5分钟
+        timeout_time = course_start_time + timedelta(minutes=5)
+        if datetime.now() > timeout_time:
+            print('超时，跳过此章节')
+            break
 
 
 def execute(username, password):
@@ -196,8 +231,8 @@ def execute(username, password):
     # 做所有课程
     try:
         do_all_course(driver, '3(2019秋)')
-    except:
-        pass
+    except Exception as ex:
+        print('做所有课程错误', ex)
 
     # 退出driver
     driver.quit()
