@@ -33,10 +33,12 @@ def try_click_chapter(driver):
     try:
         # 跳出w_code，回到主页
         driver.switch_to.default_content()
-        myframe = driver.find_elements_by_xpath("//frame[@name='w_content']//iframe[@name='w_sco']")
+        myframe = driver.find_elements_by_xpath(
+            "//frame[@name='w_content']//iframe[@name='w_sco']")
         driver.switch_to.frame(myframe)
 
-        driver.find_element_by_xpath('//div[@class="chapter"]/span[last()]').click()
+        driver.find_element_by_xpath(
+            '//div[@class="chapter"]/span[last()]').click()
         print('PPT 最后一页已点击')
     except Exception as ex:
         print('做PPT出错了', ex)
@@ -83,17 +85,20 @@ def do_all_course(driver, term='3(2019秋)'):
     :return:
     """
     driver.switch_to.frame('f_M00370003')
-    tr_list = driver.find_elements_by_xpath("//tr[starts-with(@class,'list_table_row')]")
+    tr_list = driver.find_elements_by_xpath(
+        "//tr[starts-with(@class,'list_table_row')]")
 
     for tr_element in tr_list:
         term_element = tr_element.find_elements_by_tag_name('td')[2]
         course_name = tr_element.find_elements_by_tag_name('td')[1].text
         course_percent = tr_element.find_elements_by_tag_name('td')[6].text
-        course_percent = float(course_percent[course_percent.rindex('[') + 1:].replace(']', ''))
+        course_percent = float(
+            course_percent[course_percent.rindex('[') + 1:].replace(']', ''))
 
         if term_element.text == term and course_percent < 50:
             try:
-                print(f'学期：{term_element.text}, 课程：{course_name}, 已看百分比：{course_percent}')
+                print(
+                    f'学期：{term_element.text}, 课程：{course_name}, 已看百分比：{course_percent}')
                 do_course(driver, tr_element)
             except Exception as ex:
                 print('做课程错误', ex)
@@ -107,7 +112,8 @@ def do_course(driver, tr_element):
     :return:
     """
 
-    start_to_study_link = tr_element.find_element_by_xpath("td/a[contains(text(),'开始学习')]")
+    start_to_study_link = tr_element.find_element_by_xpath(
+        "td/a[contains(text(),'开始学习')]")
 
     # 点击开始学习，跳转到第三个TAB
     start_to_study_link.click()
@@ -117,7 +123,7 @@ def do_course(driver, tr_element):
     driver.switch_to.frame('w_main')
     any_link = driver \
         .find_element_by_xpath(
-        "//table[@class='topic_border'][2]//a[starts-with(@href,'javascript:showLearnContent')]") \
+            "//table[@class='topic_border'][2]//a[starts-with(@href,'javascript:showLearnContent')]") \
         .click()
 
     # 左侧菜单
@@ -132,7 +138,8 @@ def do_course(driver, tr_element):
     time.sleep(30)
 
     # 找到所有要做的课程的链接里的一个标记
-    all_course_link_span = driver.find_elements_by_xpath('//span[@class = "h_content h_scorm_content"]')
+    all_course_link_span = driver.find_elements_by_xpath(
+        '//span[@class = "h_content h_scorm_content"]')
     for course_link_span in all_course_link_span:
         try:
             look_video(driver, course_link_span)
@@ -151,7 +158,8 @@ def expand_all_menu(driver):
     while True:
         try:
             has_plus_node = False
-            plus_nodes = driver.find_elements_by_xpath("//img[contains(@src,'plusnode.gif')]")
+            plus_nodes = driver.find_elements_by_xpath(
+                "//img[contains(@src,'plusnode.gif')]")
 
             for plus_node in plus_nodes:
                 # print(plus_node.get_property('onclick'))
@@ -206,6 +214,8 @@ def look_video(driver, course_link_span):
 
 def execute(username, password):
     print('start to new a web driver')
+    chromeOptions = webdriver.ChromeOptions()
+    chromeOptions.headless = False
     driver = webdriver.Chrome()
     driver.implicitly_wait(30)
 

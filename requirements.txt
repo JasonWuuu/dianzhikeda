@@ -1,5 +1,4 @@
 requests
-requests
 pandas
 lxml
 bs4

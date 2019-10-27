@@ -19,8 +19,8 @@ def run_all():
     df = get_all_student()
     tasks = []
     for index, value in df.iterrows():
-        # if index > 0:
-        #     break
+        if index > 0:
+            break
         print(index, value['name'])
         task = threading.Thread(target=course_service.execute, args=(value['username'], value['password'][-6:]))
         # task = asyncio.create_task(course_service.execute(value['username'], value['password'][-6:]))
