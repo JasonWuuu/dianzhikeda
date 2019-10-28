@@ -23,7 +23,8 @@ def get_verify_code_from_yi_yuan(img_base64):
 
 
 def get_img_base64(driver):
-    url = 'https://www.uestcedu.com/ifree/VerifyUtil.do?' + str(random.random())
+    url = 'https://www.uestcedu.com/ifree/VerifyUtil.do?' + \
+        str(random.random())
 
     cookies = {
         'JSESSIONID': driver.get_cookie('JSESSIONID')['value']
@@ -44,5 +45,6 @@ if __name__ == '__main__':
     # cropped=img[0,400]
     # cv2.imwrite('1.png',cropped)
 
-    s = get_img_base64(None, 'https://www.uestcedu.com/ifree/VerifyUtil.do?0.3350180113452019')
+    s = get_img_base64(
+        'https://www.uestcedu.com/ifree/VerifyUtil.do?0.3350180113452019')
     print(s)

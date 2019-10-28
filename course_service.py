@@ -91,7 +91,7 @@ def do_all_course(driver, term='3(2019秋)'):
         course_percent = tr_element.find_elements_by_tag_name('td')[6].text
         course_percent = float(course_percent[course_percent.rindex('[') + 1:].replace(']', ''))
 
-        if term_element.text == term and course_percent < 50:
+        if term_element.text == term and course_percent <= 50:
             try:
                 print(f'学期：{term_element.text}, 课程：{course_name}, 已看百分比：{course_percent}')
                 do_course(driver, tr_element)
@@ -140,7 +140,7 @@ def do_course(driver, tr_element):
             print('看视频错误', ex)
 
     # 做完后，关闭第三个TAB，并回到第二个TAB
-    driver.close()
+    # driver.close()
 
 
 def expand_all_menu(driver):
@@ -235,4 +235,5 @@ def execute(username, password):
         print('做所有课程错误', ex)
 
     # 退出driver
-    driver.quit()
+    # driver.quit()
+    
