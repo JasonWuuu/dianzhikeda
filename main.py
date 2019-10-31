@@ -25,7 +25,8 @@ def run_all():
         #     break
         print(index, value['name'])
         task = threading.Thread(target=course_service.execute, args=(
-            value['username'], value['password'][-6:]))
+            value['username'], ('0'+str(value['password']))[-6:]))
+
         # task = asyncio.create_task(course_service.execute(value['username'], value['password'][-6:]))
         tasks.append(task)
 
