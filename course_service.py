@@ -59,7 +59,7 @@ def login(driver, username, password):
 
     driver.find_element_by_id('txtLoginName').send_keys(username)
     driver.find_element_by_id('txtPassword').send_keys(password)
-
+    print(f'用户名：{username}，密码：{password}');
     while True:
         # verify_code = input('请输入验证码')
         verify_code = verify_code_service.get_verify_code(driver)
@@ -95,7 +95,7 @@ def do_all_course(driver, term='3(2019秋)'):
         course_percent = float(
             course_percent[course_percent.rindex('[') + 1:].replace(']', ''))
 
-        if term_element.text == term and course_percent < 50:
+        if term_element.text == term and course_percent <= 50:
             try:
                 print(
                     f'学期：{term_element.text}, 课程：{course_name}, 已看百分比：{course_percent}')
@@ -123,7 +123,11 @@ def do_course(driver, tr_element):
     driver.switch_to.frame('w_main')
     any_link = driver \
         .find_element_by_xpath(
+<<<<<<< HEAD
             "//table[@class='topic_border'][2]//a[starts-with(@href,'javascript:showLearnContent')]") \
+=======
+        "//table[@id='tblDataList']//a[starts-with(@href,'javascript:showLearnContent')]") \
+>>>>>>> 8b9116a18786bb303fce426dbe4e488d64365b13
         .click()
 
     # 左侧菜单
@@ -147,7 +151,7 @@ def do_course(driver, tr_element):
             print('看视频错误', ex)
 
     # 做完后，关闭第三个TAB，并回到第二个TAB
-    driver.close()
+    # driver.close()
 
 
 def expand_all_menu(driver):
@@ -243,9 +247,10 @@ def execute(username, password):
 
     # 做所有课程
     try:
-        do_all_course(driver, '3(2019秋)')
+        do_all_course(driver, '1(2018春)')
     except Exception as ex:
         print('做所有课程错误', ex)
 
     # 退出driver
-    driver.quit()
+    # driver.quit()
+    

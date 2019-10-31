@@ -12,17 +12,21 @@ load_dotenv(find_dotenv(filename='.env'))
 def get_all_student():
     return pd.read_csv('students.csv', encoding='utf-8')
 
-    print(df['password'].apply(lambda x: x[-6:]))
+    # print(df['password'].apply(lambda x: x[-6:]))
 
 
 def run_all():
     df = get_all_student()
     tasks = []
     for index, value in df.iterrows():
-        if index > 0:
-            break
+        if value['done']:
+            continue
+        # if index > 0:
+        #     break
         print(index, value['name'])
-        task = threading.Thread(target=course_service.execute, args=(value['username'], value['password'][-6:]))
+        task = threading.Thread(target=course_service.execute, args=(
+            value['username'], ('0'+str(value['password']))[-6:]))
+
         # task = asyncio.create_task(course_service.execute(value['username'], value['password'][-6:]))
         tasks.append(task)
 
@@ -31,7 +35,7 @@ def run_all():
 
     for t in tasks:
         t.start()
-        time.sleep(60)
+        time.sleep(40)
 
     for t in tasks:
         t.join()
