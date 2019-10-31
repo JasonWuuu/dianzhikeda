@@ -215,8 +215,11 @@ def look_video(driver, course_link_span):
 def execute(username, password):
     print('start to new a web driver')
     chromeOptions = webdriver.ChromeOptions()
-    chromeOptions.headless = False
-    driver = webdriver.Chrome()
+    # chromeOptions.set_headless(True)
+    # chromeOptions.add_argument("ignore-certificate-errors");
+    # chromeOptions.add_argument("ignore-ssl-errors");
+    # chromeOptions.add_argument("no-sandbox");
+    driver = webdriver.Chrome(chrome_options=chromeOptions)
     driver.implicitly_wait(30)
 
     driver.get('http://www.uestcedu.com/')
