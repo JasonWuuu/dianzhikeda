@@ -88,6 +88,18 @@ def do_all_course(driver, term='3(2019秋)'):
     tr_list = driver.find_elements_by_xpath(
         "//tr[starts-with(@class,'list_table_row')]")
 
+    pending_courses=['网络教育学习指导',
+        '思想道德修养与法律基础',
+        '大学英语1',
+        '高等数学',
+        '计算机应用基础',
+        '毛泽东思想、邓小平理论和“三个代表”重要思想概论',
+        '大学英语2',
+        '微机原理及应用',
+        '网页设计与制作',
+        'JAVA程序设计',
+        '平面图像软件设计与应用']
+
     for tr_element in tr_list:
         term_element = tr_element.find_elements_by_tag_name('td')[2]
         course_name = tr_element.find_elements_by_tag_name('td')[1].text
@@ -95,7 +107,7 @@ def do_all_course(driver, term='3(2019秋)'):
         course_percent = float(
             course_percent[course_percent.rindex('[') + 1:].replace(']', ''))
 
-        if term_element.text == term and course_percent <= 50:
+        if term_element.text == pending_courses[2]:
             try:
                 print(
                     f'学期：{term_element.text}, 课程：{course_name}, 已看百分比：{course_percent}')
@@ -123,11 +135,7 @@ def do_course(driver, tr_element):
     driver.switch_to.frame('w_main')
     any_link = driver \
         .find_element_by_xpath(
-<<<<<<< HEAD
-            "//table[@class='topic_border'][2]//a[starts-with(@href,'javascript:showLearnContent')]") \
-=======
         "//table[@id='tblDataList']//a[starts-with(@href,'javascript:showLearnContent')]") \
->>>>>>> 8b9116a18786bb303fce426dbe4e488d64365b13
         .click()
 
     # 左侧菜单

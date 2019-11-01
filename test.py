@@ -1,24 +1,4 @@
 import os
-<<<<<<< HEAD
-from random import Random
-from selenium import webdriver
-
-
-# print(os.getenv('path'))
-
-print(Random().random())
-
-
-if __name__ == '__main__':
-    driver = webdriver.Chrome()
-    driver.get('https://www.baidu.com')
-
-    driver.find_element_by_name('wd').send_keys('Hello')
-    driver.find_element_by_id('su').click()
-    result = driver.find_element_by_tag_name('em')
-    result.text()
-    print(driver.find_element_by_tag_name('em').text)
-=======
 import asyncio
 from selenium import webdriver
 import time
@@ -102,5 +82,9 @@ def baidu_get_article(driver: webdriver.Chrome, keyword):
 
 if __name__ == '__main__':
     # toutiao_search('油菜籽种植终获得补贴，下年度产量有望触底反弹', '十月以来，连盘玉米小阳春接受秋冬天气考验')
-    baidu_search('油菜籽种植终获得补贴，下年度产量有望触底反弹', '十月以来，连盘玉米小阳春接受秋冬天气考验')
->>>>>>> 8b9116a18786bb303fce426dbe4e488d64365b13
+    # baidu_search('油菜籽种植终获得补贴，下年度产量有望触底反弹', '十月以来，连盘玉米小阳春接受秋冬天气考验')
+    name ='wucong'
+
+    names =['congcong','wucong','cong']
+
+    print(name in names)
