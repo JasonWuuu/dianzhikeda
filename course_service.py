@@ -1,5 +1,6 @@
 import os
 import time
+import re
 from selenium import webdriver
 from selenium.webdriver import chrome, ChromeOptions
 from selenium.webdriver.common.alert import Alert
@@ -77,9 +78,10 @@ def login(driver, username, password):
             break
 
 
-def do_all_course(driver, term='3(2019秋)'):
+def do_all_course(driver, term='', pending_courses=[]):
     """
     做所有课程
+    :param pending_courses:
     :param driver:
     :param term:
     :return:
@@ -88,29 +90,24 @@ def do_all_course(driver, term='3(2019秋)'):
     tr_list = driver.find_elements_by_xpath(
         "//tr[starts-with(@class,'list_table_row')]")
 
-    pending_courses=['网络教育学习指导',
-        '思想道德修养与法律基础',
-        '大学英语1',
-        '高等数学',
-        '计算机应用基础',
-        '毛泽东思想、邓小平理论和“三个代表”重要思想概论',
-        '大学英语2',
-        '微机原理及应用',
-        '网页设计与制作',
-        'JAVA程序设计',
-        '平面图像软件设计与应用']
+    course_count = len(tr_list)
 
-    for tr_element in tr_list:
-        term_element = tr_element.find_elements_by_tag_name('td')[2]
-        course_name = tr_element.find_elements_by_tag_name('td')[1].text
+    for index in range(course_count):
+        driver.switch_to.window(driver.window_handles[1])
+        driver.switch_to.frame('f_M00370003')
+        tr_element = driver.find_elements_by_xpath("//tr[starts-with(@class,'list_table_row')]")[index]
+
+        term_name = tr_element.find_elements_by_tag_name('td')[2].text.strip()
+        course_name = tr_element.find_elements_by_tag_name('td')[1].text.strip()
         course_percent = tr_element.find_elements_by_tag_name('td')[6].text
         course_percent = float(
             course_percent[course_percent.rindex('[') + 1:].replace(']', ''))
 
-        if term_element.text == pending_courses[2]:
+        if course_name in pending_courses or term_name == term:
             try:
                 print(
-                    f'学期：{term_element.text}, 课程：{course_name}, 已看百分比：{course_percent}')
+                    f'学期：{term_name}, 课程：{course_name}, 已看百分比：{course_percent}')
+
                 do_course(driver, tr_element)
             except Exception as ex:
                 print('做课程错误', ex)
@@ -133,9 +130,20 @@ def do_course(driver, tr_element):
 
     driver.switch_to.window(driver.window_handles[2])
     driver.switch_to.frame('w_main')
-    any_link = driver \
-        .find_element_by_xpath(
-        "//table[@id='tblDataList']//a[starts-with(@href,'javascript:showLearnContent')]") \
+
+    study_process_element = driver.find_element_by_xpath(
+        '//div[@id="frame_user_score"]/table/tbody/tr[2]/td/table/tbody/tr/td/table/tbody/tr[1]/td[2]/font')
+    study_process = get_percent(study_process_element.text)
+
+    # 如果所做功率大于80%，那就不做了
+    if study_process > 80:
+        print('所做百分比大于80%，不做了')
+        # driver.switch_to.window(driver.window_handles[1])
+        driver.close()
+        return
+
+    any_link = driver.find_element_by_xpath(
+        "//table[@id='tblDataList']//a[starts-with(@href,'javascript:showLearnContent') and contains(@href, 'scorm_content')]") \
         .click()
 
     # 左侧菜单
@@ -159,7 +167,7 @@ def do_course(driver, tr_element):
             print('看视频错误', ex)
 
     # 做完后，关闭第三个TAB，并回到第二个TAB
-    # driver.close()
+    driver.close()
 
 
 def expand_all_menu(driver):
@@ -224,7 +232,7 @@ def look_video(driver, course_link_span):
             break
 
 
-def execute(username, password):
+def execute(username, password, term, pending_courses):
     print('start to new a web driver')
     chromeOptions = webdriver.ChromeOptions()
     # chromeOptions.set_headless(True)
@@ -255,10 +263,29 @@ def execute(username, password):
 
     # 做所有课程
     try:
-        do_all_course(driver, '1(2018春)')
+
+        do_all_course(driver, term, pending_courses)
     except Exception as ex:
         print('做所有课程错误', ex)
 
     # 退出driver
     # driver.quit()
-    
+
+
+def get_percent(content: str):
+    return float(content[0:content.index('%')])
+
+
+if __name__ == '__main__':
+    print(get_percent('1.4%(2/138)'))
+    pending_courses11 = ['网络教育学习指导',
+                         '思想道德修养与法律基础',
+                         '大学英语1',
+                         '高等数学',
+                         '计算机应用基础',
+                         '毛泽东思想、邓小平理论和“三个代表”重要思想概论',
+                         '大学英语2',
+                         '微机原理及应用',
+                         '网页设计与制作',
+                         'JAVA程序设计',
+                         '平面图像软件设计与应用']
