@@ -136,7 +136,7 @@ def do_course(driver, tr_element):
     study_process = get_percent(study_process_element.text)
 
     # 如果所做功率大于80%，那就不做了
-    if study_process > 80:
+    if study_process > 60:
         print('所做百分比大于80%，不做了')
         # driver.switch_to.window(driver.window_handles[1])
         driver.close()
@@ -226,7 +226,7 @@ def look_video(driver, course_link_span):
         print('.', end='')
 
         # 超时间为5分钟
-        timeout_time = course_start_time + timedelta(minutes=5)
+        timeout_time = course_start_time + timedelta(minutes=6)
         if datetime.now() > timeout_time:
             print('超时，跳过此章节')
             break
