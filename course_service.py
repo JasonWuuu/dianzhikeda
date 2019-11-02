@@ -234,12 +234,20 @@ def look_video(driver, course_link_span):
 
 def execute(username, password, term, pending_courses):
     print('start to new a web driver')
-    chromeOptions = webdriver.ChromeOptions()
+    chrome_options = webdriver.ChromeOptions()
+    prefs = {
+        "profile.managed_default_content_settings.images": 1,
+        "profile.content_settings.plugin_whitelist.adobe-flash-player": 1,
+        "profile.content_settings.exceptions.plugins.*,*.per_resource.adobe-flash-player": 1,
+
+    }
+
+    chrome_options.add_experimental_option('prefs', prefs)
     # chromeOptions.set_headless(True)
     # chromeOptions.add_argument("ignore-certificate-errors");
     # chromeOptions.add_argument("ignore-ssl-errors");
     # chromeOptions.add_argument("no-sandbox");
-    driver = webdriver.Chrome(chrome_options=chromeOptions)
+    driver = webdriver.Chrome(chrome_options=chrome_options)
     driver.implicitly_wait(30)
 
     driver.get('http://www.uestcedu.com/')
