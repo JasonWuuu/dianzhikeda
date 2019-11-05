@@ -136,7 +136,7 @@ def do_course(driver, tr_element):
     study_process = get_percent(study_process_element.text)
 
     # 如果所做功率大于80%，那就不做了
-    if study_process > 60:
+    if study_process > 70:
         print('所做百分比大于80%，不做了')
         # driver.switch_to.window(driver.window_handles[1])
         driver.close()
