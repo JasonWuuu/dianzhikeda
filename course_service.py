@@ -195,7 +195,6 @@ def expand_all_menu(driver):
     print('菜单展开成功')
 
 
-
 def look_video(driver, course_link_span):
     """
     真正看视频的核心
@@ -242,10 +241,11 @@ def execute(username, password, term, pending_courses):
     print('start to new a web driver')
     chrome_options = webdriver.ChromeOptions()
     prefs = {
-        "profile.managed_default_content_settings.images": 1,
-        "profile.content_settings.plugin_whitelist.adobe-flash-player": 1,
-        "profile.content_settings.exceptions.plugins.*,*.per_resource.adobe-flash-player": 1,
-
+        # "profile.managed_default_content_settings.images": 1,
+        # "profile.content_settings.plugin_whitelist.adobe-flash-player": 1,
+        # "profile.content_settings.exceptions.plugins.*,*.per_resource.adobe-flash-player": 1,
+        # 上面三句不好用，此句可行
+        'profile.managed_plugins_allowed_for_urls': ['http://learning.uestcedu.com/']
     }
 
     chrome_options.add_experimental_option('prefs', prefs)
