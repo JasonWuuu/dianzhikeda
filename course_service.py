@@ -224,10 +224,13 @@ def look_video(driver, course_link_span):
             break
         else:
             # 如果课程未完成，就点击一下此课程链接
-            if EC.element_to_be_clickable(course_link) and not does_course_link_clicked:
-                course_link.click()
-                does_course_link_clicked = True
-                print(', 状态：正在做...', end='')
+            if not does_course_link_clicked:
+                try:
+                    course_link.click()
+                    does_course_link_clicked = True
+                    print(', 状态：正在做...', end='')
+                except Exception as ex:
+                    pass
 
         time.sleep(30)
         print('.', end='')
