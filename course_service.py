@@ -126,7 +126,7 @@ def do_course(driver, tr_element):
 
     # 点击开始学习，跳转到第三个TAB
     start_to_study_link.click()
-    time.sleep(5)
+    time.sleep(8)
 
     driver.switch_to.window(driver.window_handles[2])
     driver.switch_to.frame('w_main')
@@ -152,16 +152,13 @@ def do_course(driver, tr_element):
 
     # 展开所有菜单
     expand_all_menu(driver)
-    # 展开所有菜单,再确认
-    expand_all_menu(driver)
-    # 展开所有菜单,再确认
-    expand_all_menu(driver)
 
-    time.sleep(30)
+    time.sleep(3)
 
     # 找到所有要做的课程的链接里的一个标记
     all_course_link_span = driver.find_elements_by_xpath(
         '//span[@class = "h_content h_scorm_content"]')
+    print('all_course_link_span', len(all_course_link_span))
     for course_link_span in all_course_link_span:
         try:
             look_video(driver, course_link_span)
@@ -177,9 +174,8 @@ def expand_all_menu(driver):
     展开所有菜单
     :return:
     """
-    while True:
+    for i in range(5):
         try:
-            has_plus_node = False
             plus_nodes = driver.find_elements_by_xpath(
                 "//img[contains(@src,'plusnode.gif')]")
 
@@ -187,17 +183,17 @@ def expand_all_menu(driver):
                 # print(plus_node.get_property('onclick'))
                 # if EC.element_to_be_clickable(plus_node):
                 #     plus_node.click()
+
                 try:
-                    plus_node.click()
-                    has_plus_node = True
+                    if plus_node.get_attribute('style') != 'display: none;':
+                        plus_node.click()
                 except Exception as ex:
                     pass
 
         except Exception as ex:
             pass
+    print('菜单展开成功')
 
-        if not has_plus_node:
-            break
 
 
 def look_video(driver, course_link_span):
