@@ -154,6 +154,8 @@ def do_course(driver, tr_element):
     expand_all_menu(driver)
     # 展开所有菜单,再确认
     expand_all_menu(driver)
+    # 展开所有菜单,再确认
+    expand_all_menu(driver)
 
     time.sleep(30)
 
@@ -183,9 +185,14 @@ def expand_all_menu(driver):
 
             for plus_node in plus_nodes:
                 # print(plus_node.get_property('onclick'))
-                if EC.element_to_be_clickable(plus_node):
+                # if EC.element_to_be_clickable(plus_node):
+                #     plus_node.click()
+                try:
                     plus_node.click()
                     has_plus_node = True
+                except Exception as ex:
+                    pass
+
         except Exception as ex:
             pass
 
