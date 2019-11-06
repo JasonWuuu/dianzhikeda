@@ -131,12 +131,15 @@ def do_course(driver, tr_element):
     driver.switch_to.window(driver.window_handles[2])
     driver.switch_to.frame('w_main')
 
-    study_process_element = driver.find_element_by_xpath(
-        '//div[@id="frame_user_score"]/table/tbody/tr[2]/td/table/tbody/tr/td/table/tbody/tr[1]/td[2]/font')
-    study_process = get_percent(study_process_element.text)
+    try:
+        study_process_element = driver.find_element_by_xpath(
+            '//div[@id="frame_user_score"]/table/tbody/tr[2]/td/table/tbody/tr/td/table/tbody/tr[1]/td[2]/font')
+        study_process = get_percent(study_process_element.text)
+    except Exception as ex:
+        study_process = 0
 
     # 如果所做功率大于80%，那就不做了
-    if study_process > 70:
+    if study_process > 80:
         print('所做百分比大于80%，不做了')
         # driver.switch_to.window(driver.window_handles[1])
         driver.close()
@@ -283,7 +286,7 @@ def execute(username, password, term, pending_courses):
         print('做所有课程错误', ex)
 
     # 退出driver
-    # driver.quit()
+    driver.quit()
 
 
 def get_percent(content: str):
