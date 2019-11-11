@@ -141,14 +141,20 @@ def do_course(driver, tr_element):
 
     # 如果所做功率大于80%，那就不做了
     if study_process > 90:
-        print('所做百分比大于80%，不做了')
+        print('所做百分比大于90%，不做了')
         # driver.switch_to.window(driver.window_handles[1])
         driver.close()
         return
 
     any_link = driver.find_element_by_xpath(
-        "//table[@id='tblDataList']//a[starts-with(@href,'javascript:showLearnContent') and contains(@href, 'scorm_content')]") \
-        .click()
+        "//table[@id='tblDataList']//a[starts-with(@href,'javascript:showLearnContent') and contains(@href, 'scorm_content')]")
+
+    print('所做百分比低于90%，正式开始做作业前等待5秒, 等待手动点击')
+    time.sleep(5)
+    try:
+        any_link.click()
+    except:
+        pass
 
     # 左侧菜单
     time.sleep(5)
@@ -265,7 +271,7 @@ def look_video(driver, course_link_span):
         # 超时间为5分钟
         timeout_time = course_start_time + timedelta(minutes=6)
         if datetime.now() > timeout_time:
-            print('超时，跳过此课程')
+            print('超时，跳过此章节')
             break
 
 
