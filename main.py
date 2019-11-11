@@ -37,7 +37,7 @@ def run_all():
 
     for t in tasks:
         t.start()
-        time.sleep(40)
+        time.sleep(3)
 
     for t in tasks:
         t.join()

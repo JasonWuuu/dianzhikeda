@@ -60,22 +60,26 @@ def login(driver, username, password):
 
     driver.find_element_by_id('txtLoginName').send_keys(username)
     driver.find_element_by_id('txtPassword').send_keys(password)
-    print(f'用户名：{username}，密码：{password}');
+    driver.find_element_by_id('login_button').click()
+    print(f'用户名：{username}，密码：{password}')
     while True:
         # verify_code = input('请输入验证码')
-        verify_code = verify_code_service.get_verify_code(driver)
-        driver.find_element_by_id('txtVerifyCode').send_keys(verify_code)
-        driver.find_element_by_id('login_button').click()
+        # verify_code = verify_code_service.get_verify_code(driver)
+        # driver.find_element_by_id('txtVerifyCode').send_keys(verify_code)
+        # driver.find_element_by_id('login_button').click()
+        if driver.current_url =='https://student.uestcedu.com/console/main.html':
+            break
+    else:
         time.sleep(2)
 
-        try:
-            if Alert(driver):
-                Alert(driver).accept()
-                continue
-            else:
-                break
-        except:
-            break
+        # try:
+        #     if Alert(driver):
+        #         Alert(driver).accept()
+        #         continue
+        #     else:
+        #         break
+        # except:
+        #     break
 
 
 def do_all_course(driver, term='', pending_courses=[]):
@@ -136,7 +140,7 @@ def do_course(driver, tr_element):
     study_process = get_percent(study_process_element.text)
 
     # 如果所做功率大于80%，那就不做了
-    if study_process > 70:
+    if study_process > 90:
         print('所做百分比大于80%，不做了')
         # driver.switch_to.window(driver.window_handles[1])
         driver.close()
@@ -158,12 +162,22 @@ def do_course(driver, tr_element):
     # 找到所有要做的课程的链接里的一个标记
     all_course_link_span = driver.find_elements_by_xpath(
         '//span[@class = "h_content h_scorm_content"]')
-    print('all_course_link_span', len(all_course_link_span))
-    for course_link_span in all_course_link_span:
+
+    course_link_length = len(all_course_link_span)
+
+    for i in range(course_link_length):
+        course_link_span = all_course_link_span[i] if all_course_link_span[i] else (driver.find_elements_by_xpath('//span[@class = "h_content h_scorm_content"]')[i])
         try:
             look_video(driver, course_link_span)
         except Exception as ex:
             print('看视频错误', ex)
+
+    # print('all_course_link_span', len(all_course_link_span))
+    # for course_link_span in all_course_link_span:
+    #     try:
+    #         look_video(driver, course_link_span)
+    #     except Exception as ex:
+    #         print('看视频错误', ex)
 
     # 做完后，关闭第三个TAB，并回到第二个TAB
     driver.close()
@@ -230,10 +244,28 @@ def look_video(driver, course_link_span):
         time.sleep(30)
         print('.', end='')
 
+        # 点击PPT最后一页
+        try:
+            driver.switch_to_default_content()
+            driver.switch_to.frame('w_main')
+            driver.switch_to.frame('w_lms_content')
+            driver.switch_to.frame('w_sco')
+            driver.switch_to.frame('w_content')
+            driver.switch_to.frame('w_sco')
+            driver.find_element_by_xpath('//div[@class="chapter"]/span[last()]').click()
+            print('已点击PPT最后一页')
+            time.sleep(10)
+        except:
+            pass
+        finally:
+            driver.switch_to_default_content()
+            driver.switch_to.frame('w_main')
+            driver.switch_to.frame('w_code')
+
         # 超时间为5分钟
         timeout_time = course_start_time + timedelta(minutes=6)
         if datetime.now() > timeout_time:
-            print('超时，跳过此章节')
+            print('超时，跳过此课程')
             break
 
 
