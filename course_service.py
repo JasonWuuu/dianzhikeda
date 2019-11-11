@@ -265,7 +265,10 @@ def look_video(driver, course_link_span):
             print('已点击PPT最后一页')
             time.sleep(10)
         except:
-            pass
+            # 这里经常会遇到iframe加载不进来，所以这里要重新reload一下。
+            print('页面重新加载')
+            driver.execute_script('document.getElementById("w_lms_content").window.location.reload()')
+
         finally:
             driver.switch_to_default_content()
             driver.switch_to.frame('w_main')
