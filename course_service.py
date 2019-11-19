@@ -275,7 +275,7 @@ def look_video(driver, course_link_span):
             driver.switch_to.frame('w_code')
 
         # 超时间为5分钟
-        timeout_time = course_start_time + timedelta(minutes=6)
+        timeout_time = course_start_time + timedelta(minutes=10)
         if datetime.now() > timeout_time:
             print('超时，跳过此章节')
             break
